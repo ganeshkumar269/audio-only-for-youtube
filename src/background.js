@@ -7,7 +7,7 @@ const SET_EVENT = 'yt-audio-only:set';
 
 chrome.action.setBadgeBackgroundColor({ color: '#cc0000' });
 
-const isYouTube = (url) => /^https:\/\/www\.youtube\.com\//.test(url ?? '');
+const isYouTube = (url) => /^https:\/\/(www|music)\.youtube\.com\//.test(url ?? '');
 
 async function showState(tabId, on) {
   await chrome.action.setBadgeText({ tabId, text: on ? 'ON' : '' });

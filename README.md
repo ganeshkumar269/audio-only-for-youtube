@@ -1,9 +1,9 @@
 # Audio Only for YouTube
 
 A tiny Chrome extension (no build step, no dependencies, no network calls of its own)
-that toggles YouTube into **audio-only streaming** per tab. In audio-only mode the
-video track is never downloaded and never decoded — only the audio stream (usually
-Opus, ~130–160 kbps) is fetched.
+that toggles YouTube and YouTube Music into **audio-only streaming** per tab. In
+audio-only mode the video track is never downloaded and never decoded — only the
+audio stream (usually the Opus audio codec, ~130 kbps) is fetched.
 
 ## Install
 
@@ -13,11 +13,36 @@ Opus, ~130–160 kbps) is fetched.
 
 ## Use
 
-- Click the icon (or press **Alt+Shift+A**) on a YouTube tab. The badge shows **ON**.
+- Click the icon (or press **Alt+Shift+A**) on a YouTube or YouTube Music tab. The
+  badge shows **ON**.
 - The current video reloads in place at the same timestamp, now audio only; the
   thumbnail is shown where the video was, with an "Audio only" label.
 - It stays on for that tab across videos, playlists, autoplay, and reloads. Other tabs
   are unaffected. Click again to bring the video back.
+- On YouTube Music, official "Song" tracks are already audio only; the toggle matters
+  for music videos and other uploads, which YouTube Music streams as video even in
+  "Song" mode. YouTube and YouTube Music keep separate toggles, even in the same tab.
+
+## What it saves
+
+Example: *Rick Astley – Never Gonna Give You Up (4K Remaster)*, Chrome on an Apple M4
+Mac, October 2026. Bitrates are the averages YouTube itself lists for each stream of
+this video; every video differs, and YouTube picks the quality based on your window
+size and connection.
+
+| Playback | Streams | Bitrate | Data per hour |
+|---|---|---|---|
+| 4K (what YouTube picked here) | AV1 2160p + Opus | ~9.2 Mbps | ~4.1 GB |
+| 1080p | AV1 1080p + Opus | ~1.3 Mbps | ~570 MB |
+| 144p, video hidden (how the popular alternatives we checked work) | AV1 144p + Opus | ~190 kbps | ~84 MB |
+| **Audio only (this extension)** | **Opus only** | **~130 kbps** | **~58 MB** |
+
+Measured directly over the first 45 seconds of playback (which includes YouTube
+buffering ahead): **85.4 MB with video vs 1.6 MB audio only**, and **1,137 vs 0**
+video frames decoded.
+
+Audio quality is unchanged: normal playback uses the very same Opus stream; this
+extension just skips the video stream next to it.
 
 ## How it works
 
@@ -37,11 +62,13 @@ Older audio-only extensions stopped working because YouTube moved to SABR
 
 ## Permissions
 
-- `scripting` + `https://www.youtube.com/*` — to read/flip the per-tab toggle.
+- `scripting` + `https://www.youtube.com/*` and `https://music.youtube.com/*` — to
+  read/flip the per-tab toggle.
   Nothing runs on any other site, and nothing is sent anywhere.
 
 ## Limitations
 
-- Only `www.youtube.com` (not `music.youtube.com`, `m.youtube.com` or embeds on other sites).
+- Only `www.youtube.com` and `music.youtube.com` (not `m.youtube.com` or embeds on
+  other sites).
 - Relies on an undocumented player variable; if YouTube renames it, the toggle will
   simply stop having an effect (videos keep playing normally).
