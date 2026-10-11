@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "YouTube Audio Only",
+  "name": "Audio Only for YouTube",
   "version": "1.0.0",
   "description": "Per-tab toggle that makes YouTube stream audio only — no video download, no video decoding.",
   "permissions": ["scripting"],

@@ -1,4 +1,4 @@
-# YouTube Audio Only
+# Audio Only for YouTube
 
 A tiny Chrome extension (no build step, no dependencies, no network calls of its own)
 that toggles YouTube into **audio-only streaming** per tab. In audio-only mode the
