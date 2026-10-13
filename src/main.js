@@ -42,7 +42,7 @@
 
   // Same artwork as icons/*.png, inlined because this script can't reach extension files.
   const ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-    <rect width="100" height="100" rx="22" fill="#cc0000"/>
+    <rect width="100" height="100" rx="22" fill="#4F46E5"/>
     <path d="M20 58a30 30 0 0 1 60 0" fill="none" stroke="#fff" stroke-width="11"/>
     <rect x="15.5" y="52" width="15" height="28" rx="5" fill="#fff"/>
     <rect x="69.5" y="52" width="15" height="28" rx="5" fill="#fff"/>

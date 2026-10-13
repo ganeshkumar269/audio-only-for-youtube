@@ -5,7 +5,7 @@
 const STORAGE_KEY = 'yt-audio-only';
 const SET_EVENT = 'yt-audio-only:set';
 
-chrome.action.setBadgeBackgroundColor({ color: '#cc0000' });
+chrome.action.setBadgeBackgroundColor({ color: '#4F46E5' });
 
 const isYouTube = (url) => /^https:\/\/(www|music)\.youtube\.com\//.test(url ?? '');
 
