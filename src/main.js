@@ -42,10 +42,18 @@
 
   // Same artwork as icons/*.png, inlined because this script can't reach extension files.
   const ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-    <rect width="100" height="100" rx="22" fill="#4F46E5"/>
-    <path d="M20 58a30 30 0 0 1 60 0" fill="none" stroke="#fff" stroke-width="11"/>
-    <rect x="15.5" y="52" width="15" height="28" rx="5" fill="#fff"/>
-    <rect x="69.5" y="52" width="15" height="28" rx="5" fill="#fff"/>
+    <defs><linearGradient id="g" x2="1" y2="1">
+      <stop offset="0" stop-color="#816CFA"/><stop offset="1" stop-color="#4338CA"/>
+    </linearGradient></defs>
+    <rect width="100" height="100" rx="22" fill="url(#g)"/>
+    <path d="M20 57V56a30 30 0 0 1 60 0v1" fill="none" stroke="#fff" stroke-width="9"/>
+    <g fill="#fff">
+      <rect x="15" y="53" width="14" height="26" rx="5"/>
+      <rect x="71" y="53" width="14" height="26" rx="5"/>
+      <rect x="36.5" y="57.5" width="7" height="16.8" rx="3.5"/>
+      <rect x="46.5" y="51.5" width="7" height="25.2" rx="3.5"/>
+      <rect x="56.5" y="55.5" width="7" height="19.6" rx="3.5"/>
+    </g>
   </svg>`;
   const ICON_URL = `data:image/svg+xml,${encodeURIComponent(ICON_SVG)}`;
 

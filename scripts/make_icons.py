@@ -1,7 +1,9 @@
-"""Render icons/{16,32,48,128}.png: white headphones on a rounded square.
+"""Render icons/{16,32,48,128}.png: white headphones with equalizer bars on a
+violet-to-indigo rounded square.
 
-Pure standard library. Keep the geometry and ACCENT in sync with ICON_SVG in
-src/main.js and the badge color in src/background.js.
+Pure standard library. Keep the geometry and colors in sync with ICON_SVG in
+src/main.js (same shapes in a 100x100 viewBox) and the badge color in
+src/background.js.
 
 Usage: python3 scripts/make_icons.py
 """
@@ -10,11 +12,15 @@ import struct
 import zlib
 from pathlib import Path
 
-ACCENT = (0x4F, 0x46, 0xE5)  # #4F46E5
+GRADIENT_START = (0x81, 0x6C, 0xFA)  # #816CFA, top-left
+GRADIENT_END = (0x43, 0x38, 0xCA)  # #4338CA, bottom-right
 WHITE = (255, 255, 255)
 SIZES = (16, 32, 48, 128)
 SUPERSAMPLE = 4
 OUT_DIR = Path(__file__).resolve().parent.parent / 'icons'
+
+# Equalizer bars between the ear cups: (x, half-height above the baseline).
+BARS = ((.40, .07), (.50, .13), (.60, .09))
 
 
 def rounded_rect(x, y, cx, cy, half_w, half_h, r):
@@ -23,13 +29,20 @@ def rounded_rect(x, y, cx, cy, half_w, half_h, r):
     return math.hypot(max(qx, 0), max(qy, 0)) + min(max(qx, qy), 0) - r
 
 
-def sample(x, y):
-    """(inside background, inside headphones) for a point in the unit square."""
-    bg = rounded_rect(x, y, .5, .5, .5, .5, .22) <= 0
-    band = abs(math.hypot(x - .5, y - .56) - .30) <= .055 and y <= .58
-    cups = (rounded_rect(x, y, .23, .66, .075, .14, .05) <= 0
-            or rounded_rect(x, y, .77, .66, .075, .14, .05) <= 0)
-    return bg, bg and (band or cups)
+def capsule(x, y, ax, ay, bx, by, r):
+    """Signed distance to a line segment from (ax, ay) to (bx, by), thickened by r."""
+    px, py, dx, dy = x - ax, y - ay, bx - ax, by - ay
+    h = max(0, min(1, (px * dx + py * dy) / (dx * dx + dy * dy)))
+    return math.hypot(px - dx * h, py - dy * h) - r
+
+
+def glyph(x, y):
+    """Signed distance to the white artwork, in unit-square coordinates."""
+    band = abs(math.hypot(x - .5, y - .56) - .30) - .045 if y <= .57 else 1
+    cups = min(rounded_rect(x, y, .22, .66, .07, .13, .05),
+               rounded_rect(x, y, .78, .66, .07, .13, .05))
+    bars = min(capsule(x, y, bx, .68 - h, bx, .68 + h * .4, .035) for bx, h in BARS)
+    return min(band, cups, bars)
 
 
 def render(size):
@@ -41,12 +54,15 @@ def render(size):
             bg_hits = fg_hits = 0
             for sj in range(SUPERSAMPLE):
                 for si in range(SUPERSAMPLE):
-                    bg, fg = sample((i + (si + .5) / SUPERSAMPLE) / size,
-                                    (j + (sj + .5) / SUPERSAMPLE) / size)
-                    bg_hits += bg
-                    fg_hits += fg
-            t = fg_hits / bg_hits if bg_hits else 0
-            rgb = (round(a * (1 - t) + b * t) for a, b in zip(ACCENT, WHITE))
+                    x = (i + (si + .5) / SUPERSAMPLE) / size
+                    y = (j + (sj + .5) / SUPERSAMPLE) / size
+                    if rounded_rect(x, y, .5, .5, .5, .5, .22) <= 0:
+                        bg_hits += 1
+                        fg_hits += glyph(x, y) <= 0
+            t = (i + j + 1) / (2 * size)  # diagonal gradient position
+            base = [a * (1 - t) + b * t for a, b in zip(GRADIENT_START, GRADIENT_END)]
+            f = fg_hits / bg_hits if bg_hits else 0
+            rgb = (round(c * (1 - f) + w * f) for c, w in zip(base, WHITE))
             row += bytes(rgb) + bytes([round(255 * bg_hits / n)])
         rows.append(bytes(row))
     return b''.join(rows)

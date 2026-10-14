@@ -1,4 +1,7 @@
-# Audio Only for YouTube
+<p align="center">
+  <img src="icons/128.png" width="96" height="96" alt="Audio Only for YouTube icon">
+</p>
+<h1 align="center">Audio Only for YouTube</h1>
 
 A tiny Chrome extension (no build step, no dependencies, no network calls of its own)
 that toggles YouTube and YouTube Music into **audio-only streaming** per tab. In
